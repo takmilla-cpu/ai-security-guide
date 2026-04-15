@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 보안 사용 가이드 2026 — 재직자 배포용</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#ffffff; --bg2:#f7f7f5;
+  --text:#1a1a18; --text2:#5a5a56; --text3:#8a8a84;
+  --border:rgba(0,0,0,0.1); --border2:rgba(0,0,0,0.18);
+  --red-bg:#fef2f2; --red-text:#991b1b; --red-accent:#dc2626;
+  --amber-bg:#fffbeb; --amber-text:#92400e; --amber-accent:#d97706;
+  --green-bg:#f0fdf4; --green-text:#14532d; --green-accent:#16a34a;
+  --blue-bg:#eff6ff; --blue-text:#1e3a8a; --blue-accent:#2563eb;
+  --teal-bg:#f0fdfa; --teal-text:#134e4a; --teal-accent:#0d9488;
+  --radius:10px; --radius-sm:6px;
+}
+body { font-family:'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; font-size:15px; }
+
+.layout { display:flex; align-items:flex-start; max-width:1180px; margin:0 auto; padding:0 1.5rem; }
+.doc { flex:1; min-width:0; max-width:820px; padding:0 0 80vh; }
+
+.side-toc { width:196px; flex-shrink:0; position:sticky; top:2rem; max-height:calc(100vh - 4rem); overflow-y:auto; padding:1rem 0 1rem 1.5rem; margin-left:2.5rem; border-left:1px solid var(--border); scrollbar-width:none; }
+.side-toc::-webkit-scrollbar { display:none; }
+.side-toc-title { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:0.9rem; }
+.side-toc-group { margin-bottom:0.85rem; }
+.side-toc-group-label { font-size:11px; font-weight:600; color:var(--text2); margin-bottom:0.3rem; line-height:1.4; }
+.side-toc ul { list-style:none; padding-left:0.4rem; }
+.side-toc ul li { margin:1px 0; }
+.side-toc ul li a { font-size:12px; color:var(--text3); text-decoration:none; display:block; padding:2px 7px; border-radius:4px; line-height:1.45; transition:color 0.12s, background 0.12s; }
+.side-toc ul li a:hover { color:var(--text); background:var(--bg2); }
+.side-toc ul li a.active { color:var(--blue-text); background:var(--blue-bg); font-weight:600; }
+@media(max-width:1000px){ .side-toc{display:none;} .doc{max-width:100%;} }
+
+.cover { padding:3.5rem 1rem 2.5rem; text-align:center; border-bottom:1px solid var(--border); margin-bottom:2.5rem; }
+.cover-badge { display:inline-block; background:var(--blue-bg); color:var(--blue-text); font-size:12px; padding:4px 14px; border-radius:20px; margin-bottom:1rem; font-weight:500; }
+.cover h1 { font-size:28px; font-weight:700; color:var(--text); line-height:1.35; margin-bottom:0.6rem; letter-spacing:-0.5px; }
+.cover-sub { font-size:15px; color:var(--text2); }
+.cover-meta { font-size:12px; color:var(--text3); margin-top:6px; }
+
+.toc { background:var(--bg2); border-radius:var(--radius); padding:1.5rem 1.75rem; margin-bottom:3rem; }
+.toc-title { font-size:11px; font-weight:600; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-bottom:1rem; }
+.toc-group { margin-bottom:1rem; }
+.toc-group:last-child { margin-bottom:0; }
+.toc-group-label { font-size:13px; font-weight:600; color:var(--text); margin-bottom:0.4rem; }
+.toc-list { list-style:none; padding-left:0.75rem; }
+.toc-list li { font-size:13px; color:var(--text2); padding:2px 0; display:flex; gap:8px; }
+.toc-list li a { color:var(--text2); text-decoration:none; }
+.toc-list li a:hover { color:var(--blue-text); }
+.toc-num { min-width:26px; font-size:12px; color:var(--text3); }
+
+.part-divider { height:1px; background:var(--border); margin:3rem 0; }
+.part-header { padding:1.5rem 1.75rem; border-radius:var(--radius); margin-bottom:2.5rem; }
+.part-header-intro { background:var(--bg2); }
+.part-header-biz { background:var(--blue-bg); }
+.part-header-hr { background:var(--teal-bg); }
+.part-header-common { background:var(--bg2); }
+.part-label { font-size:11px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; margin-bottom:6px; }
+.part-label-intro { color:var(--text3); }
+.part-label-biz { color:var(--blue-text); }
+.part-label-hr { color:var(--teal-text); }
+.part-label-common { color:var(--text3); }
+.part-header h2 { font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; letter-spacing:-0.3px; }
+.part-header p { font-size:13px; color:var(--text2); }
+
+.section { margin-bottom:2.75rem; scroll-margin-top:2rem; }
+.sec-hd { display:flex; align-items:center; gap:10px; margin-bottom:1.1rem; padding-bottom:0.7rem; border-bottom:1px solid var(--border); }
+.sec-num { font-size:11px; color:var(--text3); background:var(--bg2); padding:3px 9px; border-radius:var(--radius-sm); white-space:nowrap; font-weight:500; }
+.sec-title { font-size:17px; font-weight:700; color:var(--text); letter-spacing:-0.2px; }
+.intro { font-size:14px; color:var(--text2); line-height:1.75; margin-bottom:1.1rem; }
+.src-tag { display:inline-block; font-size:11px; color:var(--text3); background:var(--bg2); border-radius:4px; padding:2px 8px; margin-bottom:10px; }
+
+.card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:1rem 1.2rem; margin-bottom:0.7rem; }
+.card h3 { font-size:14px; font-weight:600; color:var(--text); margin-bottom:5px; }
+.card p { font-size:13px; color:var(--text2); line-height:1.65; }
+.d-card { border-left:3px solid var(--red-accent); border-radius:0 var(--radius) var(--radius) 0; }
+.w-card { border-left:3px solid var(--amber-accent); border-radius:0 var(--radius) var(--radius) 0; }
+.g-card { border-left:3px solid var(--green-accent); border-radius:0 var(--radius) var(--radius) 0; }
+.b-card { border-left:3px solid var(--blue-accent); border-radius:0 var(--radius) var(--radius) 0; }
+
+.bdg { display:inline-block; font-size:11px; font-weight:500; padding:2px 10px; border-radius:20px; margin-bottom:6px; }
+.bd { background:var(--red-bg); color:var(--red-text); }
+.bw { background:var(--amber-bg); color:var(--amber-text); }
+.bg { background:var(--green-bg); color:var(--green-text); }
+.bb { background:var(--blue-bg); color:var(--blue-text); }
+
+.rl { list-style:none; }
+.rl li { font-size:13px; color:var(--text); padding:6px 0; border-bottom:1px solid var(--border); display:flex; gap:9px; line-height:1.5; }
+.rl li:last-child { border-bottom:none; }
+.ri { min-width:17px; font-size:13px; flex-shrink:0; }
+
+.hl { border-radius:var(--radius); padding:1rem 1.2rem; margin-bottom:1rem; }
+.hl p { font-size:13px; line-height:1.65; }
+.hl-b { background:var(--blue-bg); } .hl-b p { color:var(--blue-text); }
+.hl-a { background:var(--amber-bg); } .hl-a p { color:var(--amber-text); }
+
+.two { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
+.ch { font-size:12px; font-weight:600; color:var(--text2); margin-bottom:7px; }
+
+.stat-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:1rem; }
+.stat { background:var(--bg2); border-radius:var(--radius-sm); padding:14px 10px; text-align:center; }
+.stat-n { font-size:24px; font-weight:700; color:var(--text); }
+.stat-l { font-size:11px; color:var(--text2); margin-top:4px; line-height:1.4; }
+
+.flow { display:flex; align-items:center; gap:4px; margin:10px 0; flex-wrap:wrap; }
+.fs { flex:1; min-width:90px; background:var(--bg2); border-radius:var(--radius-sm); padding:8px 10px; font-size:12px; color:var(--text); line-height:1.4; }
+.fa { font-size:13px; color:var(--text3); padding:0 2px; }
+.fs-danger { border-left:3px solid var(--red-accent); border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+
+.quote-block { border-left:3px solid var(--border2); padding:0.8rem 1.1rem; margin:1rem 0; border-radius:0 var(--radius-sm) var(--radius-sm) 0; background:var(--bg2); }
+.quote-block p { font-size:13px; color:var(--text2); line-height:1.65; font-style:italic; }
+.quote-block cite { font-size:11px; color:var(--text3); margin-top:5px; display:block; font-style:normal; }
+
+.why-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:1rem; }
+.why-card { background:var(--bg2); border-radius:var(--radius); padding:1rem 1.1rem; }
+.why-card-num { font-size:22px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.why-card-label { font-size:11px; color:var(--text3); margin-bottom:7px; }
+.why-card h3 { font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px; }
+.why-card p { font-size:13px; color:var(--text2); line-height:1.6; }
+
+.checklist { list-style:none; }
+.checklist li { font-size:13px; color:var(--text); padding:5px 0; display:flex; gap:9px; line-height:1.5; }
+.chk { width:15px; height:15px; border:1.5px solid var(--border2); border-radius:3px; flex-shrink:0; margin-top:2px; }
+
+.footer { text-align:center; padding:2rem 0 0; border-top:1px solid var(--border); font-size:12px; color:var(--text3); line-height:1.9; }
+
+@media(max-width:560px){
+  .cover h1 { font-size:22px; }
+  .two, .why-grid { grid-template-columns:1fr; }
+  .stat-row { grid-template-columns:1fr 1fr; }
+  .flow { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="side-toc">
+  <div class="side-toc-title">목차</div>
+  <div class="side-toc-group">
+    <div class="side-toc-group-label">🔍 들어가며</div>
+    <ul>
+      <li><a href="#s0-1">0-1 AI는 이미 업무 안에</a></li>
+      <li><a href="#s0-2">0-2 왜 보안 교육이 필요한가</a></li>
+      <li><a href="#s0-3">0-3 이 가이드 읽는 법</a></li>
+    </ul>
+  </div>
+  <div class="side-toc-group">
+    <div class="side-toc-group-label">📢 Part 1 사업부</div>
+    <ul>
+      <li><a href="#s1-1">1-1 실제 사고들</a></li>
+      <li><a href="#s1-2">1-2 기업용 계정의 진실</a></li>
+      <li><a href="#s1-3">1-3 입력 금지 데이터</a></li>
+      <li><a href="#s1-4">1-4 자주 발생하는 실수</a></li>
+      <li><a href="#s1-5">1-5 저작권 문제</a></li>
+      <li><a href="#s1-6">1-6 AI 자동 행동 위험</a></li>
+      <li><a href="#s1-7">1-7 외부 협력사</a></li>
+      <li><a href="#s1-8">1-8 올바른 활용법</a></li>
+    </ul>
+  </div>
+  <div class="side-toc-group">
+    <div class="side-toc-group-label">🏢 Part 2 경영지원</div>
+    <ul>
+      <li><a href="#s2-1">2-1 AI 현황</a></li>
+      <li><a href="#s2-2">2-2 기업용 계정의 진실</a></li>
+      <li><a href="#s2-3">2-3 입력 금지 데이터</a></li>
+      <li><a href="#s2-4">2-4 자주 발생하는 실수</a></li>
+      <li><a href="#s2-5">2-5 인사평가 문제</a></li>
+      <li><a href="#s2-6">2-6 올바른 활용법</a></li>
+    </ul>
+  </div>
+  <div class="side-toc-group">
+    <div class="side-toc-group-label">🚨 공통</div>
+    <ul>
+      <li><a href="#s-incident">사고 대응 3단계</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="doc">
+
+<div class="cover">
+  <div class="cover-badge">재직자 배포용 · 2026</div>
+  <h1>우리 회사에서 AI,<br>어떻게 써야 할까요?</h1>
+  <p class="cover-sub">Claude · ChatGPT 등 생성형 AI 보안 사용 가이드</p>
+  <p class="cover-meta">2026 · 사내 배포용 · 외부 공유 금지</p>
+</div>
+
+<div class="toc">
+  <div class="toc-title">목차</div>
+  <div class="toc-group">
+    <div class="toc-group-label">🔍 들어가며 — 공통</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">0-1</span><a href="#s0-1">AI는 이미 우리 업무 안에 있습니다</a></li>
+      <li><span class="toc-num">0-2</span><a href="#s0-2">왜 지금 AI 보안 교육이 필요한가</a></li>
+      <li><span class="toc-num">0-3</span><a href="#s0-3">이 가이드를 읽어야 하는 이유</a></li>
+    </ul>
+  </div>
+  <div class="toc-group">
+    <div class="toc-group-label">📢 Part 1 — 사업부 대상 (AE · 기획 · 제작)</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">1-1</span><a href="#s1-1">실제로 일어난 사고들</a></li>
+      <li><span class="toc-num">1-2</span><a href="#s1-2">"기업용 계정은 안전하다"의 진실</a></li>
+      <li><span class="toc-num">1-3</span><a href="#s1-3">절대 입력하면 안 되는 클라이언트 데이터</a></li>
+      <li><span class="toc-num">1-4</span><a href="#s1-4">사업부에서 자주 발생하는 실수</a></li>
+      <li><span class="toc-num">1-5</span><a href="#s1-5">카피 · 크리에이티브와 저작권</a></li>
+      <li><span class="toc-num">1-6</span><a href="#s1-6">AI가 자동으로 행동할 때의 위험</a></li>
+      <li><span class="toc-num">1-7</span><a href="#s1-7">외부 협력사 주의사항</a></li>
+      <li><span class="toc-num">1-8</span><a href="#s1-8">올바른 활용법 / 체크리스트</a></li>
+    </ul>
+  </div>
+  <div class="toc-group">
+    <div class="toc-group-label">🏢 Part 2 — 경영지원 대상 (인사 · 총무 · 재무)</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">2-1</span><a href="#s2-1">지금 우리 주변의 AI 현황</a></li>
+      <li><span class="toc-num">2-2</span><a href="#s2-2">"기업용 계정은 안전하다"의 진실</a></li>
+      <li><span class="toc-num">2-3</span><a href="#s2-3">절대 입력하면 안 되는 HR · 재무 데이터</a></li>
+      <li><span class="toc-num">2-4</span><a href="#s2-4">경영지원팀에서 자주 발생하는 실수</a></li>
+      <li><span class="toc-num">2-5</span><a href="#s2-5">AI로 인사평가를 쓰면 생기는 문제</a></li>
+      <li><span class="toc-num">2-6</span><a href="#s2-6">올바른 활용법 / 체크리스트</a></li>
+    </ul>
+  </div>
+  <div class="toc-group">
+    <div class="toc-group-label">🚨 공통 — 사고 발생 시 대응</div>
+    <ul class="toc-list">
+      <li><span class="toc-num">—</span><a href="#s-incident">사고 대응 3단계</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="part-header part-header-intro">
+  <div class="part-label part-label-intro">들어가며 · 전 직무 공통</div>
+  <h2>AI 보안 교육, 왜 필요한가요?</h2>
+  <p>이 가이드를 읽기 전에 먼저 알아두어야 할 것들</p>
+</div>
+
+<div class="section" id="s0-1">
+  <div class="sec-hd"><span class="sec-num">0-1</span><span class="sec-title">AI는 이미 우리 업무 안에 있습니다</span></div>
+  <div class="src-tag">출처: Copilot Consulting, Shadow AI Policy Report (2026) / Gallup Workforce Survey</div>
+  <p class="intro">ChatGPT가 등장한 지 2년 만에 Fortune 500 기업의 80% 이상이 도입했습니다. 이제 AI는 선택이 아닌 일상입니다. 문제는 대부분의 직원이 회사의 공식 가이드 없이 AI를 먼저 쓰기 시작했다는 점입니다.</p>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-n">80%+</div><div class="stat-l">Fortune 500 기업이 ChatGPT 출시 9개월 만에 도입</div></div>
+    <div class="stat"><div class="stat-n">68%</div><div class="stat-l">직원이 비승인 AI 도구에 회사 데이터를 입력한 경험 있음</div></div>
+    <div class="stat"><div class="stat-n">42%</div><div class="stat-l">Shadow AI를 매일 사용 — 일시적 실험이 아닌 고정 워크플로우</div></div>
+  </div>
+  <div class="hl hl-a"><p>⚠️ 현재 보안 도구로 탐지되는 Shadow AI 사용은 전체의 5% 미만입니다. 대부분의 무단 사용과 데이터 유출은 발견되지 않고 지나갑니다.</p></div>
+</div>
+
+<div class="section" id="s0-2">
+  <div class="sec-hd"><span class="sec-num">0-2</span><span class="sec-title">왜 지금 AI 보안 교육이 필요한가</span></div>
+  <div class="src-tag">출처: Sombrainc, LLM Security Risks in 2026 / SANS Institute, AI Security Guidelines / Fortinet, 2025 Cybersecurity Skills Gap Report</div>
+  <p class="intro">AI는 업무 효율을 높이는 도구이지만, 기존 보안 상식만으로는 대응하기 어려운 새로운 유형의 위험을 함께 가져옵니다. 방화벽이나 백신으로는 막을 수 없는 위협입니다.</p>
+  <div class="why-grid">
+    <div class="why-card"><div class="why-card-num">01</div><div class="why-card-label">AI는 기존 보안 도구로 막을 수 없습니다</div><h3>입력한 순간 이미 전송됩니다</h3><p>방화벽 · 백신 · DLP는 파일과 이메일을 감시하도록 설계되었습니다. AI 채팅창에 붙여넣은 텍스트는 대부분 탐지되지 않고 외부 서버로 전송됩니다.</p></div>
+    <div class="why-card"><div class="why-card-num">02</div><div class="why-card-label">사람의 판단이 유일한 방어선입니다</div><h3>기술보다 습관이 먼저입니다</h3><p>SANS Institute는 AI 보안의 핵심이 기술 통제보다 직원 행동 변화에 있다고 강조합니다. 무엇을 입력할지 판단하는 것은 결국 사람입니다.</p></div>
+    <div class="why-card"><div class="why-card-num">03</div><div class="why-card-label">광고 대행사는 특히 위험합니다</div><h3>클라이언트 기밀을 항상 다룹니다</h3><p>브리프 · 전략 문서 · 매체비 수치 · 미출시 제품 정보. 광고 대행사의 일상 업무가 곧 유출 시 가장 민감한 데이터입니다.</p></div>
+    <div class="why-card"><div class="why-card-num">04</div><div class="why-card-label">실제 사고는 이미 일어나고 있습니다</div><h3>삼성, JPMorgan, Goldman Sachs</h3><p>글로벌 대기업들도 직원의 AI 무단 사용으로 기밀이 유출되는 사고를 겪었습니다. 우리 회사라고 예외가 아닙니다.</p></div>
+  </div>
+  <div class="quote-block"><p>"AI 보안은 기술적인 문제가 아니라 시스템 · 데이터 · 사람의 문제입니다. 기술 통제만으로는 충분하지 않습니다."</p><cite>— Sombrainc, LLM Security Risks in 2026</cite></div>
+</div>
+
+<div class="section" id="s0-3">
+  <div class="sec-hd"><span class="sec-num">0-3</span><span class="sec-title">이 가이드를 읽어야 하는 이유</span></div>
+  <p class="intro">이 가이드는 AI 사용을 금지하기 위한 것이 아닙니다. 안전하게 잘 쓰기 위한 것입니다. AI는 쓰지 않는 것보다 올바르게 쓰는 것이 훨씬 중요합니다.</p>
+  <div class="two">
+    <div class="card g-card"><div class="bdg bg">이 가이드가 다루는 것</div><ul class="rl"><li><span class="ri">✓</span>어떤 정보를 절대 입력하면 안 되는지</li><li><span class="ri">✓</span>기업용 계정과 개인 계정의 실질적 차이</li><li><span class="ri">✓</span>AI를 안전하게 활용하는 구체적 방법</li><li><span class="ri">✓</span>사고가 발생했을 때 어떻게 대응하는지</li></ul></div>
+    <div class="card b-card"><div class="bdg bb">직무별로 읽는 방법</div><ul class="rl"><li><span class="ri">→</span>AE · 기획 · 제작 직무 → Part 1 (사업부)</li><li><span class="ri">→</span>인사 · 총무 · 재무 직무 → Part 2 (경영지원)</li><li><span class="ri">→</span>사고 대응 절차 → 맨 마지막 공통 섹션</li><li><span class="ri">→</span>두 직무 모두 해당 → 전체 읽기 권장</li></ul></div>
+  </div>
+</div>
+
+<div class="part-divider"></div>
+
+<div class="part-header part-header-biz">
+  <div class="part-label part-label-biz">PART 1 · 사업부 대상</div>
+  <h2>클라이언트 정보와 AI, 이것만은 꼭 지켜주세요</h2>
+  <p>AE · 기획 · 제작 직무 필독</p>
+</div>
+
+<div class="section" id="s1-1">
+  <div class="sec-hd"><span class="sec-num">1-1</span><span class="sec-title">실제로 일어난 사고들</span></div>
+  <div class="src-tag">출처: Sombrainc, LLM Security Risks in 2026 (2025.12)</div>
+  <div class="card d-card"><div class="bdg bd">삼성전자 소스코드 유출 (2023)</div><h3>엔지니어가 ChatGPT로 디버깅하다 내부 코드 유출</h3><p>삼성 엔지니어들이 업무 효율을 위해 독점 소스코드를 ChatGPT에 붙여넣었다가 기밀이 유출되었습니다. 이후 삼성은 사내 외부 AI 사용을 전면 금지했습니다.</p></div>
+  <div class="card d-card"><div class="bdg bd">Slack AI 프롬프트 인젝션 (2024)</div><h3>메시지 속 숨겨진 명령으로 비공개 채널 데이터 자동 유출</h3><p>Slack AI에 악성 명령이 숨겨진 메시지가 전달되면서, AI가 비공개 채널 데이터를 공격자 서버로 자동 전송했습니다. 사용자는 클릭 한 번도 하지 않았습니다.</p></div>
+  <div class="card d-card"><div class="bdg bd">JPMorgan · Goldman Sachs ChatGPT 제한 (2023)</div><h3>직원들이 민감 금융 정보를 AI에 공유한 사실 확인</h3><p>내부 모니터링 결과 직원들이 민감한 금융 정보를 ChatGPT에 입력한 사실이 확인되어 사용을 제한했습니다.</p></div>
+</div>
+
+<div class="section" id="s1-2">
+  <div class="sec-hd"><span class="sec-num">1-2</span><span class="sec-title">"기업용 계정은 안전하다"의 진실</span></div>
+  <div class="src-tag">출처: AMST Legal, Anthropic Claude AI Terms Explained (2025.09)</div>
+  <p class="intro">Anthropic은 2025년 9월 28일 소비자 약관을 개정했습니다. 계정 종류에 따라 데이터 처리 방식이 완전히 달라집니다.</p>
+  <div class="two">
+    <div class="card d-card"><div class="bdg bd">개인 계정 (무료 · Pro)</div><ul class="rl"><li><span class="ri">✕</span>입력 내용이 AI 모델 학습에 사용됨</li><li><span class="ri">✕</span>데이터 보존 최대 5년 (기존 30일 대비 6,000% 증가)</li><li><span class="ri">✕</span>기업 데이터 보호 약관 미적용</li></ul></div>
+    <div class="card w-card"><div class="bdg bw">기업용 (Enterprise)</div><ul class="rl"><li><span class="ri">△</span>학습 미사용 — 계약상 약속</li><li><span class="ri">△</span>단, 서버에는 일정 기간 저장됨</li><li><span class="ri">△</span>보안 사고 시 유출 가능성 여전히 존재</li></ul></div>
+  </div>
+  <div class="hl hl-a"><p>⚠️ Claude Pro · ChatGPT Plus는 유료지만 소비자 계정입니다. "학습에 쓰지 않는다"는 것이지, "저장하지 않는다"는 뜻이 아닙니다. 민감 정보 입력 자체를 삼가는 것이 최선입니다.</p></div>
+</div>
+
+<div class="section" id="s1-3">
+  <div class="sec-hd"><span class="sec-num">1-3</span><span class="sec-title">절대 입력하면 안 되는 클라이언트 데이터</span></div>
+  <div class="src-tag">출처: Optro (FairNow), AI Usage Policy Template (2026)</div>
+  <div class="card d-card"><div class="bdg bd">클라이언트 기밀</div><ul class="rl"><li><span class="ri">✕</span>클라이언트 브리프 전문, 미출시 제품명 · 출시 일정</li><li><span class="ri">✕</span>캠페인 매체비, 예산, GRP · CPM 단가 수치</li><li><span class="ri">✕</span>경쟁사 대응 전략, 미공개 마케팅 전략 문서</li><li><span class="ri">✕</span>클라이언트 담당자 연락처 · 내부 조직도</li></ul></div>
+</div>
+
+<div class="section" id="s1-4">
+  <div class="sec-hd"><span class="sec-num">1-4</span><span class="sec-title">사업부에서 자주 발생하는 실수</span></div>
+  <div class="card"><div class="bdg bd">위험 상황 1</div><h3>"브리프 요약해줘" — 전문 붙여넣기</h3><p>클라이언트 브리프 전체를 AI에 붙여넣는 경우. 전략 방향 · 경쟁사 분석 · 예산 정보가 모두 AI 서버로 전송됩니다.</p></div>
+  <div class="card"><div class="bdg bd">위험 상황 2</div><h3>"매체비 표 정리해줘" — 수치 직접 입력</h3><p>클라이언트별 매체비 · GRP · CPM 단가가 담긴 엑셀을 AI에 업로드하거나 내용을 직접 입력하는 경우.</p></div>
+  <div class="card"><div class="bdg bw">주의 상황</div><h3>야근 중 개인 계정으로 PT 제작</h3><p>퇴근 후 집에서 개인 Claude · ChatGPT로 클라이언트 제안서를 작성하는 경우. 개인 계정은 기업 보호 약관이 적용되지 않습니다.</p></div>
+</div>
+
+<div class="section" id="s1-5">
+  <div class="sec-hd"><span class="sec-num">1-5</span><span class="sec-title">카피 · 크리에이티브와 저작권</span></div>
+  <div class="src-tag">출처: U.S. Copyright Office, AI Report Part 2 (2025.01)</div>
+  <div class="hl hl-b"><p>📌 미국 저작권청은 2025년 1월 보고서에서, AI가 생성한 결과물은 인간의 충분한 창작적 기여가 없는 한 저작권 보호를 받지 못한다고 결론 내렸습니다.</p></div>
+  <div class="two">
+    <div class="card d-card"><div class="bdg bd">AI 생성 카피</div><p>법적으로 저작권 보호 불가. 클라이언트 납품 시 반드시 고지 필요. 경쟁사가 동일 카피를 사용해도 법적 대응이 어렵습니다.</p></div>
+    <div class="card d-card"><div class="bdg bd">AI 생성 이미지</div><p>학습 데이터의 원작자 저작물이 반영될 수 있어 상업 광고 사용 시 소송 리스크가 있습니다.</p></div>
+  </div>
+  <div class="card g-card"><div class="bdg bg">권장 방법</div><ul class="rl"><li><span class="ri">✓</span>AI 결과물은 아이디어 · 레퍼런스 초안용으로만 — 최종 납품물은 사람이 창작 · 편집</li><li><span class="ri">✓</span>AI 활용 여부를 클라이언트와 계약 전 협의하고 문서화</li></ul></div>
+</div>
+
+<div class="section" id="s1-6">
+  <div class="sec-hd"><span class="sec-num">1-6</span><span class="sec-title">AI가 자동으로 행동할 때의 위험</span></div>
+  <div class="src-tag">출처: Sombrainc, LLM Security Risks in 2026 / Reco.ai, AI &amp; Cloud Security Breaches 2025</div>
+  <div class="card d-card"><div class="bdg bd">EchoLeak 사고 (2025) — Microsoft 365 Copilot</div><h3>이메일 한 통으로 SharePoint 파일이 자동 유출, 피해 약 2억 달러</h3><p>공격자가 숨겨진 명령이 담긴 이메일을 전송하자, Copilot이 자동으로 SharePoint를 검색하고 민감 파일을 외부로 전송했습니다. 피해자는 클릭 한 번도 하지 않았습니다.</p></div>
+  <div class="card w-card">
+    <div class="bdg bw">광고 대행사 리스크 — AI가 클라이언트에게 자동 발송</div>
+    <h3>미완성 보고서나 내부 수치가 클라이언트에게 전달되는 상황</h3>
+    <p>AI를 메일함 · 슬랙과 연동한 상태에서 외부 문서의 숨겨진 명령이 실행되면 발생할 수 있습니다.</p>
+    <div class="flow" style="margin-top:10px">
+      <div class="fs">외부 메일 수신<br><span style="font-size:11px;color:var(--text3)">숨겨진 명령 포함</span></div>
+      <div class="fa">→</div>
+      <div class="fs">AI 자동 실행<br><span style="font-size:11px;color:var(--text3)">사용자 모르게</span></div>
+      <div class="fa">→</div>
+      <div class="fs">파일 · 메일 발송</div>
+      <div class="fa">→</div>
+      <div class="fs fs-danger">기밀 유출<br><span style="font-size:11px;color:var(--red-text)">복구 불가</span></div>
+    </div>
+  </div>
+  <div class="card g-card"><div class="bdg bg">예방법</div><ul class="rl"><li><span class="ri">✓</span>AI에 메일 · 슬랙 연동 시 팀장 승인 필수</li><li><span class="ri">✓</span>AI 자동 발송 설정 금지 — 반드시 사람이 최종 확인 후 발송</li><li><span class="ri">✓</span>외부에서 받은 문서 · 링크를 AI에 그대로 입력하지 않기</li></ul></div>
+</div>
+
+<div class="section" id="s1-7">
+  <div class="sec-hd"><span class="sec-num">1-7</span><span class="sec-title">외부 협력사 주의사항</span></div>
+  <div class="card b-card"><div class="bdg bb">계약 단계</div><ul class="rl"><li><span class="ri">→</span>NDA에 AI 도구 사용 제한 조항 포함 여부 확인</li><li><span class="ri">→</span>협력사가 사용하는 AI 도구 파악 및 승인 여부 결정</li></ul></div>
+  <div class="card b-card"><div class="bdg bb">공유 단계</div><ul class="rl"><li><span class="ri">→</span>브리프 공유 시 AI 입력 금지 사항 명시</li><li><span class="ri">→</span>민감 수치는 마스킹 처리 (예: 예산 ○○○만원)</li></ul></div>
+  <div class="card b-card"><div class="bdg bb">납품 단계</div><ul class="rl"><li><span class="ri">→</span>납품물에 AI 생성 포함 여부 확인 요청</li><li><span class="ri">→</span>AI 생성 이미지 · 카피는 저작권 확인서 제출 요청</li></ul></div>
+</div>
+
+<div class="section" id="s1-8">
+  <div class="sec-hd"><span class="sec-num">1-8</span><span class="sec-title">올바른 활용법 · 체크리스트</span></div>
+  <div class="two" style="margin-bottom:1rem">
+    <div>
+      <div class="ch" style="color:var(--red-text)">이렇게 쓰지 마세요</div>
+      <div class="card d-card" style="margin-bottom:6px"><p style="font-size:13px">"○○브랜드 신제품 런칭 캠페인 전략 짜줘" + 브리프 전문</p></div>
+      <div class="card d-card" style="margin-bottom:6px"><p style="font-size:13px">예산 1.2억, CPM 단가 표 첨부 후 "최적 매체믹스 추천해줘"</p></div>
+      <div class="card d-card"><p style="font-size:13px">클라이언트 브리프 PDF 업로드 후 "인사이트 요약해줘"</p></div>
+    </div>
+    <div>
+      <div class="ch" style="color:var(--green-text)">이렇게 쓰세요</div>
+      <div class="card g-card" style="margin-bottom:6px"><p style="font-size:13px">"뷰티 브랜드 신제품 런칭 캠페인 접근법 3가지 알려줘"</p></div>
+      <div class="card g-card" style="margin-bottom:6px"><p style="font-size:13px">"TV · 디지털 혼합 캠페인에서 매체 효율 높이는 방법은?"</p></div>
+      <div class="card g-card"><p style="font-size:13px">"소비재 브랜드 브리프에서 자주 다루는 핵심 요소는?"</p></div>
+    </div>
+  </div>
+  <div class="two">
+    <div class="card"><div class="ch">입력 전 확인</div><ul class="checklist"><li><div class="chk"></div>클라이언트명 · 브랜드명이 포함되지 않았나요?</li><li><div class="chk"></div>예산 · 매체비 · 단가 수치가 없나요?</li><li><div class="chk"></div>미공개 전략 · 제품 정보가 없나요?</li></ul></div>
+    <div class="card"><div class="ch">결과물 · 저작권</div><ul class="checklist"><li><div class="chk"></div>AI 생성 카피 · 이미지 저작권을 확인했나요?</li><li><div class="chk"></div>AI 활용 여부를 클라이언트에게 고지했나요?</li><li><div class="chk"></div>사람이 최종 검토 · 편집했나요?</li></ul></div>
+    <div class="card"><div class="ch">계정 · 연동</div><ul class="checklist"><li><div class="chk"></div>회사 승인 기업용 계정을 사용하고 있나요?</li><li><div class="chk"></div>AI 메일 · 슬랙 연동 시 팀장 승인을 받았나요?</li><li><div class="chk"></div>AI 자동 발송 설정이 꺼져 있나요?</li></ul></div>
+    <div class="card"><div class="ch">협력사</div><ul class="checklist"><li><div class="chk"></div>협력사의 AI 사용 여부를 확인했나요?</li><li><div class="chk"></div>NDA에 AI 관련 조항이 있나요?</li><li><div class="chk"></div>납품물에 AI 생성 포함 여부를 확인했나요?</li></ul></div>
+  </div>
+</div>
+
+<div class="part-divider"></div>
+
+<div class="part-header part-header-hr">
+  <div class="part-label part-label-hr">PART 2 · 경영지원 대상</div>
+  <h2>직원 개인정보와 AI, 이것만은 꼭 지켜주세요</h2>
+  <p>인사 · 총무 · 재무 직무 필독</p>
+</div>
+
+<div class="section" id="s2-1">
+  <div class="sec-hd"><span class="sec-num">2-1</span><span class="sec-title">지금 우리 주변의 AI 현황</span></div>
+  <div class="src-tag">출처: Copilot Consulting, Shadow AI Policy Report (2026)</div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-n">68%</div><div class="stat-l">직원이 비승인 AI에 회사 데이터를 입력한 경험 있음</div></div>
+    <div class="stat"><div class="stat-n">23%</div><div class="stat-l">기밀 문서를 소비자용 AI에 통째로 붙여넣은 경험 있음</div></div>
+    <div class="stat"><div class="stat-n">11%</div><div class="stat-l">개인정보 · 재무 등 규제 대상 데이터를 비승인 AI에 입력</div></div>
+  </div>
+  <div class="hl hl-a"><p>⚠️ 현재 보안 도구로 탐지되는 Shadow AI 사용은 전체의 5% 미만입니다. 대부분의 유출은 발견되지 않고 지나갑니다.</p></div>
+</div>
+
+<div class="section" id="s2-2">
+  <div class="sec-hd"><span class="sec-num">2-2</span><span class="sec-title">"기업용 계정은 안전하다"의 진실</span></div>
+  <div class="src-tag">출처: AMST Legal, Anthropic Claude AI Terms Explained (2025.09)</div>
+  <div class="two">
+    <div class="card d-card"><div class="bdg bd">개인 계정 (무료 · Pro)</div><ul class="rl"><li><span class="ri">✕</span>입력 내용이 AI 학습에 사용됨</li><li><span class="ri">✕</span>데이터 보존 최대 5년 (기존 30일 대비 6,000% 증가)</li><li><span class="ri">✕</span>기업 데이터 보호 약관 미적용</li></ul></div>
+    <div class="card w-card"><div class="bdg bw">기업용 (Enterprise)</div><ul class="rl"><li><span class="ri">△</span>학습 미사용 — 계약상 약속</li><li><span class="ri">△</span>서버에는 저장됨 (보안 사고 시 유출 위험)</li><li><span class="ri">△</span>관리자가 대화 로그 열람 가능</li></ul></div>
+  </div>
+  <div class="hl hl-a"><p>⚠️ 재택근무 시에도 동일 기준이 적용됩니다. 집에서 개인 계정으로 업무 문서를 처리하는 경우도 동일하게 위험합니다.</p></div>
+</div>
+
+<div class="section" id="s2-3">
+  <div class="sec-hd"><span class="sec-num">2-3</span><span class="sec-title">절대 입력하면 안 되는 HR · 재무 데이터</span></div>
+  <div class="src-tag">출처: Optro (FairNow), AI Usage Policy Template (2026)</div>
+  <div class="card d-card" style="margin-bottom:8px"><div class="bdg bd">인사 · 급여 데이터</div><ul class="rl"><li><span class="ri">✕</span>직원 성명, 주민등록번호, 계좌번호</li><li><span class="ri">✕</span>개인 연봉, 성과급, 인센티브 내역</li><li><span class="ri">✕</span>인사평가 결과, 징계 기록, 채용 후보자 면접 평가</li></ul></div>
+  <div class="card d-card"><div class="bdg bd">재무 · 법무 데이터</div><ul class="rl"><li><span class="ri">✕</span>회사 손익계산서, 매출 내역</li><li><span class="ri">✕</span>계약서 전문, 법적 분쟁 관련 문서</li><li><span class="ri">✕</span>거래처 결제 조건, 단가 협상 내용</li></ul></div>
+</div>
+
+<div class="section" id="s2-4">
+  <div class="sec-hd"><span class="sec-num">2-4</span><span class="sec-title">경영지원팀에서 자주 발생하는 실수</span></div>
+  <div class="card"><div class="bdg bd">위험 상황 1</div><h3>"이 계약서 요약해줘" — 전문 붙여넣기</h3><p>계약서 전문을 AI에 붙여넣는 경우. 계약 금액, 위약금 조건, 비공개 조항이 모두 AI 서버로 전송됩니다.</p></div>
+  <div class="card"><div class="bdg bd">위험 상황 2</div><h3>"급여명세서 정리해줘" — 엑셀 업로드</h3><p>직원 이름 · 부서 · 연봉이 담긴 급여 파일을 AI에 업로드하는 경우. 개인정보보호법 위반 가능성이 있습니다.</p></div>
+  <div class="card"><div class="bdg bw">주의 상황</div><h3>개인 계정으로 업무 처리</h3><p>퇴근 후 집에서 개인 Claude · ChatGPT로 회사 업무 문서를 처리하는 경우. 계정이 개인 계정이면 기업 보호 약관이 적용되지 않습니다.</p></div>
+</div>
+
+<div class="section" id="s2-5">
+  <div class="sec-hd"><span class="sec-num">2-5</span><span class="sec-title">AI로 인사평가를 쓰면 생기는 문제</span></div>
+  <div class="src-tag">출처: Optro (FairNow), AI Usage Policy Template (2026)</div>
+  <div class="hl hl-a"><p>⚠️ 실제 사례: 관리자가 AI로 직원 성과 리뷰를 작성했을 때, AI가 편향된 결과물을 생성하여 차별 소송 위험에 노출된 사례가 보고되었습니다.</p></div>
+  <div class="card w-card"><div class="bdg bw">주요 리스크 3가지</div><ul class="rl"><li><span class="ri">1</span>AI 편향: 직군 · 성별 · 연령 특성에 따라 편향된 평가 문구 생성 → 차별 소송 리스크</li><li><span class="ri">2</span>개인정보 유출: 직원 이름 · 성과 내용 입력 시 AI 서버에 저장됨</li><li><span class="ri">3</span>환각(hallucination): AI가 없는 사실을 만들어내어 평가 내용이 부정확해질 수 있음</li></ul></div>
+  <div class="card g-card"><div class="bdg bg">권장 방법</div><ul class="rl"><li><span class="ri">✓</span>AI는 평가 문구의 구조 · 어투 참고용으로만 사용</li><li><span class="ri">✓</span>직원 이름, 실제 성과 수치는 직접 작성</li><li><span class="ri">✓</span>최종 내용은 반드시 관리자가 직접 검토 · 수정</li></ul></div>
+</div>
+
+<div class="section" id="s2-6">
+  <div class="sec-hd"><span class="sec-num">2-6</span><span class="sec-title">올바른 활용법 · 체크리스트</span></div>
+  <div class="two" style="margin-bottom:1rem">
+    <div>
+      <div class="ch" style="color:var(--red-text)">이렇게 쓰지 마세요</div>
+      <div class="card d-card" style="margin-bottom:6px"><p style="font-size:13px">"김○○ 사원 연봉 4,200만원, 성과 B등급 — 승급 이메일 써줘"</p></div>
+      <div class="card d-card" style="margin-bottom:6px"><p style="font-size:13px">급여 엑셀 파일 업로드 후 "부서별 평균 연봉 계산해줘"</p></div>
+      <div class="card d-card"><p style="font-size:13px">계약서 전문 붙여넣고 "위험 조항 찾아줘"</p></div>
+    </div>
+    <div>
+      <div class="ch" style="color:var(--green-text)">이렇게 쓰세요</div>
+      <div class="card g-card" style="margin-bottom:6px"><p style="font-size:13px">"B등급 직원의 성과 개선 피드백 이메일 구조 예시 알려줘"</p></div>
+      <div class="card g-card" style="margin-bottom:6px"><p style="font-size:13px">"부서별 평균 연봉 계산하는 엑셀 함수 알려줘"</p></div>
+      <div class="card g-card"><p style="font-size:13px">"IT 용역 계약서에서 일반적으로 검토해야 할 조항 목록은?"</p></div>
+    </div>
+  </div>
+  <div class="two">
+    <div class="card"><div class="ch">입력 전 확인</div><ul class="checklist"><li><div class="chk"></div>직원 이름 · 연봉 · 평가 정보가 없나요?</li><li><div class="chk"></div>계약서 · 재무 문서 전문을 붙여넣지 않았나요?</li><li><div class="chk"></div>주민번호 · 계좌번호 등 민감정보가 없나요?</li></ul></div>
+    <div class="card"><div class="ch">결과물 확인</div><ul class="checklist"><li><div class="chk"></div>AI 생성 인사평가를 그대로 쓰지 않았나요?</li><li><div class="chk"></div>AI가 만든 수치 · 사실을 직접 검증했나요?</li><li><div class="chk"></div>최종 문서를 사람이 직접 검토했나요?</li></ul></div>
+    <div class="card"><div class="ch">계정 확인</div><ul class="checklist"><li><div class="chk"></div>회사 승인 기업용 계정을 사용하고 있나요?</li><li><div class="chk"></div>개인 계정으로 업무 문서를 처리하지 않나요?</li><li><div class="chk"></div>재택 시에도 동일 기준을 적용하고 있나요?</li></ul></div>
+    <div class="card"><div class="ch">사고 예방</div><ul class="checklist"><li><div class="chk"></div>Shadow AI(비승인 계정) 사용을 하지 않나요?</li><li><div class="chk"></div>AI 학습 설정을 OFF로 해두었나요?</li><li><div class="chk"></div>사고 발생 시 보고 채널을 알고 있나요?</li></ul></div>
+  </div>
+</div>
+
+<div class="part-divider"></div>
+
+<div class="part-header part-header-common">
+  <div class="part-label part-label-common">공통 — 전 직무</div>
+  <h2>사고 발생 시 대응 3단계</h2>
+  <p>실수로 민감 정보를 입력했다면 즉시 아래 순서로 대응하세요.</p>
+</div>
+<div class="section" id="s-incident">
+  <div class="card"><div class="bdg bd">Step 1 — 즉시</div><h3>대화 삭제 + 상황 기록</h3><p>AI 대화 기록을 즉시 삭제하고, 무엇을 입력했는지 스크린샷으로 기록해두세요.</p></div>
+  <div class="card"><div class="bdg bw">Step 2 — 당일</div><h3>팀장 보고</h3><p>숨기지 말고 즉시 보고하세요. 빠른 보고가 피해를 최소화합니다. 보고 지연이 더 큰 문제가 됩니다.</p></div>
+  <div class="card"><div class="bdg bb">Step 3 — 이후</div><h3>고지 여부 검토</h3><p>유출된 정보의 민감도에 따라 클라이언트 고지 또는 개인정보보호법상 감독기관 신고 의무 발생 가능. 법무 · 경영진과 협의하세요.</p></div>
+</div>
+
+<div class="footer">
+  <p>문의: 담당 팀장 또는 보안 담당자</p>
+  <p>본 자료는 사내 배포용이며 외부 공유를 금합니다.</p>
+</div>
+
+</div>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.side-toc a');
+  var sections = [];
+  links.forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el, a:a});
+  });
+  function update(){
+    var y = window.scrollY + 150;
+    var cur = sections[0];
+    for(var i = 0; i < sections.length; i++){
+      if(sections[i].el.offsetTop <= y) cur = sections[i];
+    }
+    links.forEach(function(a){ a.classList.remove('active'); });
+    if(cur) cur.a.classList.add('active');
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>
